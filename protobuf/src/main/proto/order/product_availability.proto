@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package order.productavailability;
+
+option java_multiple_files = true;
+option java_package = "io.giovannymassuia.disecomm.protobuf.order.productavailability";
+
+service ProductAvailabilityService {
+  rpc CheckProductAvailability(CheckProductAvailabilityRequest) returns (CheckProductAvailabilityResponse);
+}
+
+message CheckProductAvailabilityRequest {
+  string productId = 1;
+}
+
+message CheckProductAvailabilityResponse {
+  bool inStock = 1;
+  string availableDate = 2;
+  int32 quantityAvailable = 3;
+}

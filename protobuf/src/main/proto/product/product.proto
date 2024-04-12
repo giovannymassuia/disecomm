@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package product;
+
+option java_multiple_files = true;
+option java_package = "io.giovannymassuia.disecomm.protobuf.product";
+
+service ProductService {
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+message ListProductsRequest {
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  float price = 4;
+  bool inStock = 5;
+}
