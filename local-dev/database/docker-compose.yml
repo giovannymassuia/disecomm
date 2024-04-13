@@ -1,0 +1,32 @@
+name: disecomm-databases
+
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    restart: always # Always restart the container if it crashes
+    environment:
+      - POSTGRESQL_USERNAME=database
+      - POSTGRESQL_PASSWORD=database
+      - POSTGRESQL_DATABASE=disecomm
+    ports:
+      - '5432:5432'
+  #    volumes:
+  #      - postgres:/bitnami/postgresql
+
+  mongodb:
+    image: bitnami/mongodb:latest
+    restart: always # Always restart the container if it crashes
+    environment:
+      - MONGODB_USERNAME=database
+      - MONGODB_PASSWORD=database
+      - MONGODB_ROOT_PASSWORD=database
+      - MONGODB_DATABASE=disecomm
+      - EXPERIMENTAL_DOCKER_DESKTOP_FORCE_QEMU=1
+    ports:
+      - '27017:27017'
+#    volumes:
+#      - mongodb:/bitnami/mongodb
+
+volumes:
+  postgres:
+  mongodb:

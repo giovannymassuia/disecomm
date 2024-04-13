@@ -1,5 +1,7 @@
 package io.giovannymassuia.disecomm.productcatalog.grpc;
 
+import io.giovannymassuia.disecomm.productcatalog.model.ProductAnalytics;
+import io.giovannymassuia.disecomm.productcatalog.model.ProductAnalyticsRepository;
 import io.giovannymassuia.disecomm.protobuf.order.productavailability.CheckProductAvailabilityRequest;
 import io.giovannymassuia.disecomm.protobuf.order.productavailability.ProductAvailabilityServiceGrpc;
 import io.giovannymassuia.disecomm.protobuf.product.GetProductRequest;
@@ -11,6 +13,7 @@ import io.giovannymassuia.disecomm.protobuf.product.ProductServiceGrpc;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @GrpcService
 public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBase {
@@ -18,9 +21,24 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
     @GrpcClient("product-availability-service")
     private ProductAvailabilityServiceGrpc.ProductAvailabilityServiceBlockingStub productAvailabilityService;
 
+    @Autowired
+    private ProductAnalyticsRepository productAnalyticsRepository;
+
     @Override
     public void getProduct(GetProductRequest request,
         StreamObserver<GetProductResponse> responseObserver) {
+
+        // compute analytics
+        productAnalyticsRepository.findById(request.getId())
+            .ifPresentOrElse(
+                productAnalytics -> {
+                    productAnalyticsRepository.save(
+                        productAnalytics.withCount(productAnalytics.count() + 1));
+                },
+                () -> {
+                    productAnalyticsRepository.save(new ProductAnalytics(request.getId(), 1));
+                }
+            );
 
         responseObserver.onNext(GetProductResponse.newBuilder()
                                     .setProduct(Product.newBuilder()
@@ -53,4 +71,5 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
                                     .build());
         responseObserver.onCompleted();
     }
+
 }
