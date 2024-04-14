@@ -19,3 +19,8 @@
     - [Attributes Processors](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/attributesprocessor/README.md)
     - [Resource Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor)
     - [Resource Detector Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor)
+
+### Resources
+
+- https://medium.com/@ahmadalammar/simplifying-spring-observability-with-opentelemetry-auto-instrumentation-and-java-agent-part-1-ef163f4125e3
+- https://medium.com/@ahmadalammar/integrating-spring-kafka-and-opentelemetry-for-effective-distributed-tracing-73aa4748011e

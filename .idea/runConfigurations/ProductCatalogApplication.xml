@@ -5,7 +5,7 @@
       <env name="OTEL_LOGS_EXPORTER" value="otlp" />
       <env name="OTEL_METRICS_EXPORTER" value="otlp" />
       <env name="OTEL_TRACES_EXPORTER" value="otlp" />
-      <env name="OTEL_SERVICE_NAME" value="product" />
+      <env name="OTEL_SERVICE_NAME" value="product-catalog-app" />
       <env name="JAVA_TOOL_OPTIONS" value="-javaagent:/Users/giovannymassuia/projects/github/distributed-ecommerce-v2/product-catalog/target/opentelemetry-javaagent-2.3.0.jar" />
     </envs>
     <module name="product-catalog" />

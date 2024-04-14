@@ -21,6 +21,13 @@ public class ProductAvailabilityGrpcService extends
     public void checkProductAvailability(CheckProductAvailabilityRequest request,
         StreamObserver<CheckProductAvailabilityResponse> responseObserver) {
 
+        // add random delay betwen 500 and 3000 ms
+        try {
+            Thread.sleep((long) (Math.random() * 2500) + 500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         LOGGER.info("Checking product availability for product with id: {}",
             request.getProductId());
 
