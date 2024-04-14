@@ -40,9 +40,9 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
     public void getProduct(GetProductRequest request,
         StreamObserver<GetProductResponse> responseObserver) {
 
-        Span span = tracer.spanBuilder("getProductStart").startSpan();
-
         LOGGER.info("Get product with id: {}", request.getId());
+
+        Span span = tracer.spanBuilder("getProductStart").startSpan();
 
 //        // compute analytics
 //        productAnalyticsRepository.findById(request.getId())
@@ -69,8 +69,8 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
                                                     ).build())
                                     .build());
 
-        LOGGER.info("Product get successfully");
         span.end();
+        LOGGER.info("Product get successfully");
 
         responseObserver.onCompleted();
     }

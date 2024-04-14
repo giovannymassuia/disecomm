@@ -8,17 +8,35 @@ processors:
   # batch metrics before sending to reduce API usage
   batch:
 
+  attributes:
+    actions:
+      - key: loki.resource.labels
+        action: insert
+        value: service_name, environment
+
+  resource:
+    attributes:
+      - key: environment
+        from_attribute: environment
+        action: insert
+      - key: service_name
+        from_attribute: service.name
+        action: insert
+
+  resourcedetection/env:
+    detectors: [ env ]
+
 exporters:
   logging:
     loglevel: debug
   prometheus:
     endpoint: "0.0.0.0:8889"
     const_labels:
-      label1: spring
-  #  otlp:
-  #    endpoint: tempo:4317  # tempo container host and port
-  #    tls:
-  #      insecure: true
+      customLabel: "disecomm"
+  otlp:
+    endpoint: tempo:4317  # tempo container host and port
+    tls:
+      insecure: true
   loki:
     endpoint: "http://loki:3100/loki/api/v1/push"
 
@@ -33,15 +51,15 @@ extensions:
 service:
   extensions: [ health_check, pprof, zpages ]
   pipelines:
-    # for now we only interested about metrics...
     metrics:
       receivers: [ otlp ]
-      processors: [ batch ]
+      processors: [ batch, resource, resourcedetection/env ]
       exporters: [ prometheus ]
     traces:
       receivers: [ otlp ]
-      processors: [ batch ]
+      processors: [ batch, resource, resourcedetection/env ]
       exporters: [ otlp, logging ]  # name here should match the exporter name for tempo which is otlp
     logs:
       receivers: [ otlp ]
-      exporters: [ loki,logging ]
+      processors: [ resourcedetection/env, resource, attributes ]
+      exporters: [ loki, logging ]

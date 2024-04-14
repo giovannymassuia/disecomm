@@ -1,0 +1,53 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: metrics-prometheus
+    orgId: 1
+  - name: traces-tempo
+    orgId: 1
+  - name: logs-loki
+    orgId: 1
+
+datasources:
+  - name: metrics-prometheus
+    uid: metrics-prometheus
+    type: prometheus
+    access: proxy
+    orgId: 1
+    url: http://prometheus:9090
+    editable: true
+    jsonData:
+      httpMethod: "POST"
+
+  - name: traces-tempo
+    uid: traces-tempo
+    type: tempo
+    access: proxy
+    orgId: 1
+    url: http://tempo:3200
+    editable: true
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: logs-loki
+        filterByTraceID: true
+        customQuery: true
+        query: '{$${__tags}} |= "$${__trace.traceId}" | json | line_format "{{.service_name}} \t {{.body}}"'
+      nodeGraph:
+        enabled: true
+      lokiSearch:
+        datasourceUid: logs-loki
+
+  - name: logs-loki
+    uid: logs-loki
+    type: loki
+    access: proxy
+    orgId: 1
+    isDefault: true
+    url: http://loki:3100
+    editable: true
+    jsonData:
+      derivedFields:
+        - name: "traceID"
+          matcherRegex: (?<=\"traceid\"\s*:\s*\")(\w+)*
+          url: "$${__value.raw}"
+          datasourceUid: traces-tempo

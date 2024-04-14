@@ -8,6 +8,8 @@ services:
       - --config=/etc/otelcol-cont/otel-collector.yml
     volumes:
       - ./otel-collector.yml:/etc/otelcol-cont/otel-collector.yml
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=environment=local
     ports:
       - "1888:1888" # pprof extension
       - "8888:8888" # Prometheus metrics exposed by the collector
@@ -48,3 +50,5 @@ services:
     image: grafana/grafana
     ports:
       - "3000:3000"
+    volumes:
+      - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/grafana-datasources.yml
