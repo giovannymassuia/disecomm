@@ -6,7 +6,7 @@
       <env name="OTEL_METRICS_EXPORTER" value="otlp" />
       <env name="OTEL_TRACES_EXPORTER" value="otlp" />
       <env name="OTEL_SERVICE_NAME" value="order-mgmt-app" />
-      <env name="JAVA_TOOL_OPTIONS" value="-javaagent:/Users/giovannymassuia/projects/github/distributed-ecommerce-v2/order-management/target/opentelemetry-javaagent-2.3.0.jar" />
+      <env name="JAVA_TOOL_OPTIONS" value="-javaagent:/Users/giovannymassuia/projects/github/disecomm/order-management/target/opentelemetry-javaagent-2.3.0.jar" />
     </envs>
     <module name="order-management" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="io.giovannymassuia.disecomm.ordermanagement.OrderManagementApplication" />
