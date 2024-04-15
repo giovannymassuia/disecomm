@@ -26,6 +26,7 @@ _Node: The architecture is still a work in progress, so it may change in the fut
 - **Observability**: Prometheus, Loki, Tempo, Grafana
 - **Containerization**: Docker, Kubernetes
 - **CI/CD**: GitHub Actions
+- **Load testing**: K6
 
 ## How to run locally
 
