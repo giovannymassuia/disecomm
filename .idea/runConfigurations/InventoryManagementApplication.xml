@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="InventoryManagementApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <envs>
+      <env name="OTEL_EXPORTER_OTLP_ENDPOINT" value="http://localhost:4318" />
+      <env name="OTEL_LOGS_EXPORTER" value="otlp" />
+      <env name="OTEL_METRICS_EXPORTER" value="otlp" />
+      <env name="OTEL_TRACES_EXPORTER" value="otlp" />
+      <env name="OTEL_SERVICE_NAME" value="inventory-mgmt-app" />
+      <env name="JAVA_TOOL_OPTIONS" value="-javaagent:/Users/giovannymassuia/projects/github/distributed-ecommerce-v2/inventory-management/target/opentelemetry-javaagent-2.3.0.jar" />
+    </envs>
+    <module name="inventory-management" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="io.giovannymassuia.disecomm.inventorymanagement.InventoryManagementApplication" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

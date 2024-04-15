@@ -24,9 +24,51 @@ services:
       - EXPERIMENTAL_DOCKER_DESKTOP_FORCE_QEMU=1
     ports:
       - '27017:27017'
-#    volumes:
-#      - mongodb:/bitnami/mongodb
+  #    volumes:
+  #      - mongodb:/bitnami/mongodb
+
+  kafka:
+    image: bitnami/kafka:latest
+    restart: always # Always restart the container if it crashes
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,CONTROLLER://:9093,PLAINTEXT_HOST://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_JMX_PORT=9997
+      - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka0 -Dcom.sun.management.jmxremote.rmi.port=9997
+    ports:
+      - '9092:9092' # Kafka
+  #      - '9997:9997' # JMX Metrics
+  #    volumes:
+  #      - kafka:/bitnami/kafka
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 3001:8080
+    depends_on:
+      - kafka
+    #      - schema-registry0
+    #      - kafka-connect0
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      #      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+      #      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry0:8085
+      #      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
+      #      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
+      KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED: 'true'
+      KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED: 'true'
 
 volumes:
   postgres:
   mongodb:
+  kafka:

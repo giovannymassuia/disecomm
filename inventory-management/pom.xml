@@ -10,56 +10,28 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.giovannymassuia.disecomm</groupId>
-    <artifactId>order-management</artifactId>
+    <artifactId>inventory-management</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>order-management</name>
-    <description>order-management</description>
+    <name>inventory-management</name>
+    <description>inventory-management</description>
     <properties>
         <java.version>21</java.version>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>io.giovannymassuia.disecomm</groupId>
-            <artifactId>protobuf</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
-        <!--        </dependency>-->
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.devh</groupId>
-            <artifactId>grpc-spring-boot-starter</artifactId>
-            <version>3.0.0.RELEASE</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
