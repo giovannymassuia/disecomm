@@ -1,0 +1,30 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Load Test" type="K6ConfigurationType" factoryName="k6" editBeforeRun="true" show_console_on_std_err="false" show_console_on_std_out="false">
+    <option name="allowRunningInParallel" value="false" />
+    <option name="data">
+      <K6RunData>
+        <option name="additionalParams" value="" />
+        <option name="envs">
+          <map />
+        </option>
+        <option name="pty" value="false" />
+        <option name="script" value="$PROJECT_DIR$/local-dev/k6/main.js" />
+        <option name="thresholdsAsTests" value="false" />
+        <option name="type" value="local" />
+      </K6RunData>
+    </option>
+    <option name="projectPathOnTarget" />
+    <option name="selectedOptions">
+      <list />
+    </option>
+    <option name="additionalParams" value="" />
+    <option name="envs">
+      <map />
+    </option>
+    <option name="pty" value="false" />
+    <option name="script" value="$PROJECT_DIR$/local-dev/k6/main.js" />
+    <option name="thresholdsAsTests" value="false" />
+    <option name="type" value="local" />
+    <method v="2" />
+  </configuration>
+</component>

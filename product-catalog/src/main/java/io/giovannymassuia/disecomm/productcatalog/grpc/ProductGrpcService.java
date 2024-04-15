@@ -42,12 +42,16 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
 
         LOGGER.info("Get product with id: {}", request.getId());
 
-        // add random delay betwen 500 and 3000 ms
+        // add random delay between 100 and 2000 ms
         try {
-            Thread.sleep((long) (Math.random() * 2500) + 500);
+            Thread.sleep((long) (Math.random() * 1900) + 100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        // random fibonacci calculation between 1 and 40
+        int n = (int) (Math.random() * 50) + 1;
+        long result = fibonacci(n);
 
         Span span = tracer.spanBuilder("getProductStart").startSpan();
 
@@ -97,6 +101,13 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
                                                      .build())
                                     .build());
         responseObserver.onCompleted();
+    }
+
+    private long fibonacci(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        return fibonacci(n - 1) + fibonacci(n - 2);
     }
 
 }
