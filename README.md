@@ -9,6 +9,20 @@ business logic is very simple and not the main focus of the project.
 The project also explores observability, monitoring, and logging, so we can have a better
 understanding of what's happening inside the system.
 
-## High-level architecture
+## High-level architecture overview
 
-![High-level architecture](./assets/high-level-architecture-dark.png) 
+_Node: The architecture is still a work in progress, so it may change in the future._
+
+![High-level architecture](./assets/high-level-architecture-dark.png)
+
+## Technologies
+
+- **Programming languages**: Java, Go, TypeScript
+- **Frameworks**: Spring Boot
+- **Databases**: PostgreSQL, MongoDB, Redis
+- **Message brokers**: Kafka, RabbitMQ
+- **Communication**: REST, gRPC, GraphQL
+- **AuthZ/AuthN**: ??
+- **Observability**: Prometheus, Loki, Tempo, Grafana
+- **Containerization**: Docker, Kubernetes
+- **CI/CD**: GitHub Actions
