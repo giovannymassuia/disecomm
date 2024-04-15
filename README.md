@@ -11,4 +11,4 @@ understanding of what's happening inside the system.
 
 ## High-level architecture
 
-![High-level architecture](./assets/high-level-architecture-light.png) 
+![High-level architecture](./assets/high-level-architecture.png) 
