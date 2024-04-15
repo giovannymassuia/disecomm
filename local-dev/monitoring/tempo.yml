@@ -1,7 +1,6 @@
 server:
   http_listen_port: 3200
 
-
 distributor:
 
   receivers: # this configuration will listen on all ports and protocols that tempo is capable of.
@@ -20,8 +19,8 @@ distributor:
 
 ingester:
   max_block_duration: 5m               # cut the headblock when this much time passes. this is being set for demo purposes and should probably be left alone normally
-  limits_config:
-    max_global_streams_per_user: 10000
+  #  limits_config:
+#  max_global_streams_per_user: 10000
 
 compactor:
   compaction:
