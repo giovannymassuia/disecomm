@@ -1,0 +1,13 @@
+{
+  "customAnnotationsMapping": {
+    "^Query\\.\\w+$": [
+      "org.springframework.graphql.data.method.annotation.QueryMapping"
+    ],
+    "^Mutation\\.\\w+$": [
+      "org.springframework.graphql.data.method.annotation.MutationMapping"
+    ],
+    "^Subscription\\.\\w+$": [
+      "org.springframework.graphql.data.method.annotation.SubscriptionMapping"
+    ]
+  }
+}

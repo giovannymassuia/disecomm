@@ -21,7 +21,7 @@ public class InventoryConsumer {
     @KafkaListener(topics = "inventory-adjustments")
     public void consume(ConsumerRecord<String, String> record) {
         var request = parse(record.value());
-        logger.info("Consumed inventory adjustment key: {}, value: {}", record.key(), request);
+//        logger.info("Consumed inventory adjustment key: {}, value: {}", record.key(), request);
     }
 
     private InventoryAdjustmentRequest parse(String value) {

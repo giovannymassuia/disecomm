@@ -1,0 +1,22 @@
+type Product {
+    id: ID!
+    name: String!
+    price: Float!
+    inStock: Boolean!
+    inventory(types: [InventoryType!]): [ProductInventory!]!
+}
+
+enum InventoryType {
+    ON_HAND
+    AVAILABLE
+}
+
+type ProductInventory {
+    type: InventoryType!
+    quantity: Int!
+}
+
+extend type Query {
+    products: [Product!]!
+    product(id: ID!): Product!
+}
