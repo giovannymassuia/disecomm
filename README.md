@@ -9,6 +9,9 @@ business logic is very simple and not the main focus of the project.
 The project also explores observability, monitoring, and logging, so we can have a better
 understanding of what's happening inside the system.
 
+> **Note:** _This project is intentionally over-engineered to explore different technologies and
+architectures._
+
 ## High-level architecture overview
 
 _Node: The architecture is still a work in progress, so it may change in the future._
