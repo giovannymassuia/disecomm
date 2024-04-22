@@ -5,9 +5,9 @@ services:
     image: bitnami/postgresql:latest
     restart: always # Always restart the container if it crashes
     environment:
-      - POSTGRESQL_USERNAME=database
-      - POSTGRESQL_PASSWORD=database
-      - POSTGRESQL_DATABASE=disecomm
+      - POSTGRES_USERNAME=database
+      - POSTGRES_PASSWORD=database
+      - POSTGRES_DATABASE=disecomm
     ports:
       - '5432:5432'
   #    volumes:
