@@ -10,14 +10,12 @@ runs:
 
     - name: Cache dependencies ⚡
       id: cache_dependencies
-      working-directory: ./docs/events-catalog
       uses: actions/cache@v3
       with:
-        path: node_modules
+        path: ./docs/events-catalog/node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
 
     - name: Install dependencies 🔧
       shell: bash
       if: steps.cache_dependencies.outputs.cache-hit != 'true'
-      #      run: cd ./docs/events-catalog && npm ci
-      run: pwd
+      run: cd ./docs/events-catalog && npm ci
