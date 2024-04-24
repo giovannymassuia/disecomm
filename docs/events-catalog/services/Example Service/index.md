@@ -1,5 +1,5 @@
 ---
-name: Inventory Service
+name: Example Service
 summary: |
   Service responsible for managing the inventory of the store.
 owners:
@@ -9,7 +9,7 @@ repository:
   url: https://github.com/giovannymassuia/disecomm/tree/main/inventory-management
 ---
 
-The inventory service is responsible for managing the inventory of the store. It listens to events
+The example service is responsible for managing the inventory of the store. It listens to events
 from the order service and updates the inventory accordingly.
 
 

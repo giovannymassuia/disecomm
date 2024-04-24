@@ -1,9 +1,11 @@
 ---
-name: Shopping
+name: Example
 summary: |
   Domain for everything shopping
 owners:
   - giovannymassuia
+tags:
+  - label: example
 ---
 
 <Admonition>Domain for everything to do with Shopping at our business. Before adding any events or

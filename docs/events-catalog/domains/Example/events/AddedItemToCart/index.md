@@ -1,14 +1,16 @@
 ---
-name: RemovedItemFromCart
-version: 0.0.1
+name: AddedItemToCart
+version: 0.0.2
 summary: |
-  Holds information about what the user removed from their cart.
+  Holds information about what the user added to their shopping cart.
 producers:
-    - Basket Service
+  - Basket Service
 consumers:
-    - Data Lake
+  - Data Lake
 owners:
-    - giovannymassuia
+  - giovannymassuia
+tags:
+  - label: example
 ---
 
 <Admonition>When firing this event make sure you set the `correlation-id` in the headers. Our
@@ -23,7 +25,10 @@ We have a frontend application that allows users to buy things from our store. T
 interacts directly with the `Basket Service` to add items to the cart. The `Basket Service` will
 raise the events.
 
-
 <NodeGraph title="Consumer / Producer Diagram" />
 
+<EventExamples title="How to trigger event" />
+
 <Schema />
+
+<SchemaViewer renderRootTreeLines defaultExpandedDepth='0' maxHeight="500" />

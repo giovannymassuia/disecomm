@@ -12,7 +12,11 @@ understanding of what's happening inside the system.
 > **Note:** _This project is intentionally over-engineered to explore different technologies and
 architectures._
 
-## High-level architecture overview
+## Documentation
+
+- [Events Catalog](https://giovannymassuia.github.io/disecomm)
+
+### High-level architecture overview
 
 _Node: The architecture is still a work in progress, so it may change in the future._
 
