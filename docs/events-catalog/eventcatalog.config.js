@@ -1,4 +1,5 @@
 module.exports = {
+  basePath: '/disecomm',
   title: 'EventCatalog',
   tagline: 'Discover, Explore and Document your Event Driven Architectures',
   organizationName: 'Disecomm',
