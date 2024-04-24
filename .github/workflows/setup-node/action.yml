@@ -18,6 +18,5 @@ runs:
 
     - name: Install dependencies 🔧
       shell: bash
-      working-directory: ./docs/events-catalog
       if: steps.cache_dependencies.outputs.cache-hit != 'true'
-      run: npm ci
+      run: cd ./docs/events-catalog && npm ci
