@@ -1,10 +1,10 @@
 module.exports = {
   basePath: '/disecomm',
-  title: 'EventCatalog',
-  tagline: 'Discover, Explore and Document your Event Driven Architectures',
+  title: 'Disecomm Event Catalog',
+  tagline: 'Discover and Explore the Event Catalog',
   organizationName: 'Disecomm',
   projectName: 'Event Catalog',
-  editUrl: 'https://github.com/boyney123/eventcatalog-demo/edit/master',
+  // editUrl: 'https://github.com/giovannymassuia/disecomm/edit/main/docs/events-catalog/',
   trailingSlash: true,
   primaryCTA: {
     label: 'Explore Events',
@@ -12,7 +12,7 @@ module.exports = {
   },
   secondaryCTA: {
     label: 'Getting Started',
-    href: "https://www.eventcatalog.dev/"
+    href: "https://github.com/giovannymassuia/disecomm"
   },
   logo: {
     alt: 'EventCatalog Logo',
@@ -34,7 +34,7 @@ module.exports = {
     {label: '3D Node Graph', href: '/overview'},
     {
       label: 'GitHub',
-      href: 'https://github.com/boyney123/eventcatalog-demo/edit/master'
+      href: 'https://github.com/giovannymassuia/disecomm',
     }
   ],
   users: [
