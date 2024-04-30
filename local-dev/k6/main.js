@@ -59,7 +59,8 @@ export const scenario1 = () => {
     const payload = JSON.stringify({sku: '1', newQuantity: 10});
     const params = {headers: {'Content-Type': 'application/json'}};
     randomizedRequest(
-        () => httpCall('http://localhost:8081/inventory', payload, params),
+        () => httpCall('post', 'http://localhost:8081/inventory/on-hand',
+            payload, params),
         10
     );
   });
@@ -84,13 +85,14 @@ function grpcCall(client, method, payload) {
   check(response, {
     'status is OK': (r) => r.status === grpc.StatusOK,
   });
-  console.log('Response grpc:', JSON.stringify(response.message));
+  console.log('Response grpc:', response.status,
+      JSON.stringify(response.message));
 }
 
-function httpCall(url, payload, params) {
-  const response = http.post(url, payload, params);
+function httpCall(method, url, payload, params) {
+  const response = http[method](url, payload, params);
   check(response, {
     'status is 200': (r) => r.status === 200,
   });
-  console.log('Response http:', response.body);
+  console.log('Response http:', response.status, response.body);
 }
