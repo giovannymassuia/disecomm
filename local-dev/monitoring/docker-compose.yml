@@ -20,11 +20,15 @@ services:
       - "55679:55679" # zpages extension
 
   prometheus:
-    container_name: prometheus
+#    container_name: prometheus
     image: prom/prometheus
     restart: always
     command:
-      - --config.file=/etc/prometheus/prometheus.yml
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15m'
+      - '--web.enable-remote-write-receiver' # This is necessary to k6 to send metrics to Prometheus
+      - '--enable-feature=native-histograms'
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -42,11 +46,16 @@ services:
   loki:
     image: grafana/loki:latest
     command: -config.file=/etc/loki/local-config.yaml
+    environment:
+      - LOKI_LIMITS_CONFIG_RETENTION_PERIOD=15m
+#    volumes:
+#      - ./loki-config.yaml:/etc/loki/local-config.yaml
+#      - ./loki-data:/tmp/loki
     ports:
       - "3100:3100"
 
   grafana:
-    container_name: grafana
+#    container_name: grafana
     image: grafana/grafana
     ports:
       - "3000:3000"

@@ -1,5 +1,6 @@
 package io.giovannymassuia.disecomm.productcatalog.grpc;
 
+import io.giovannymassuia.disecomm.productcatalog.model.ProductAnalytics;
 import io.giovannymassuia.disecomm.productcatalog.model.ProductAnalyticsRepository;
 import io.giovannymassuia.disecomm.protobuf.order.productavailability.CheckProductAvailabilityRequest;
 import io.giovannymassuia.disecomm.protobuf.order.productavailability.ProductAvailabilityServiceGrpc;
@@ -55,17 +56,17 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
 
         Span span = tracer.spanBuilder("getProductStart").startSpan();
 
-//        // compute analytics
-//        productAnalyticsRepository.findById(request.getId())
-//            .ifPresentOrElse(
-//                productAnalytics -> {
-//                    productAnalyticsRepository.save(
-//                        productAnalytics.withCount(productAnalytics.count() + 1));
-//                },
-//                () -> {
-//                    productAnalyticsRepository.save(new ProductAnalytics(request.getId(), 1));
-//                }
-//            );
+        // compute analytics
+        productAnalyticsRepository.findById(request.getId())
+            .ifPresentOrElse(
+                productAnalytics -> {
+                    productAnalyticsRepository.save(
+                        productAnalytics.withCount(productAnalytics.count() + 1));
+                },
+                () -> {
+                    productAnalyticsRepository.save(new ProductAnalytics(request.getId(), 1));
+                }
+            );
 
         responseObserver.onNext(GetProductResponse.newBuilder()
                                     .setProduct(Product.newBuilder()

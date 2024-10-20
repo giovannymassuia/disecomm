@@ -1,0 +1,59 @@
+FROM eclipse-temurin:21-jdk-alpine AS builder
+
+ARG APP_NAME
+
+RUN echo "🔧 Building the application: ${APP_NAME}"
+
+# Set the working directory inside the container
+WORKDIR /build
+
+# Copy the dependencies from the base dependencies image
+COPY --from=disecomm-build-dependencies:local /dependencies/maven /root/.m2/repository/io/giovannymassuia/disecomm
+
+# Copy application source code to the container
+COPY ./${APP_NAME}/ ./
+
+# Build the application
+RUN ./mvnw clean package -DskipTests
+
+FROM eclipse-temurin:21-jre-alpine AS runtime
+
+ARG APP_NAME
+ARG JAVA_TOOL_OPTIONS_VALUE
+ARG USE_OTEL_AGENT
+
+RUN echo "🚀 Application runtime image: ${APP_NAME}"
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the JAR files from the builder stage to the runtime stage
+COPY --from=builder /build/target/*.jar /app/
+
+# Rename the JAR file to service.jar
+RUN mv /app/${APP_NAME}*.jar /app/service.jar
+
+# Remove otel agent jar if not needed
+RUN if [ "$USE_OTEL_AGENT" = "false" ]; then rm /app/opentelemetry*.jar; fi
+RUN if [ "$USE_OTEL_AGENT" = "true" ]; then mv /app/opentelemetry*.jar /app/otel-java-agent.jar; fi
+
+RUN ls -la /app
+
+# Download the OpenTelemetry Java agent
+#ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.3.0/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+# Copy the OpenTelemetry Java agent from the local file system
+#COPY target/opentelemetry-javaagent*.jar /app/opentelemetry-javaagent.jar
+#COPY --from=builder /build/target/opentelemetry-javaagent*.jar /app/opentelemetry-javaagent.jar
+
+# Set environment variables
+ENV OTEL_LOGS_EXPORTER=otlp
+ENV OTEL_METRICS_EXPORTER=otlp
+ENV OTEL_TRACES_EXPORTER=otlp
+ENV OTEL_SERVICE_NAME=${APP_NAME}
+ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+
+RUN echo "🔧 JAVA_TOOL_OPTIONS_VALUE: ${JAVA_TOOL_OPTIONS_VALUE}"
+ENV JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS_VALUE}
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "/app/service.jar"]

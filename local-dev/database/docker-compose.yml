@@ -50,7 +50,7 @@ services:
   #      - kafka:/bitnami/kafka
 
   kafka-ui:
-    container_name: kafka-ui
+#    container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:
       - 3001:8080

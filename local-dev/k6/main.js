@@ -35,8 +35,13 @@ export const options = {
 };
 
 export const scenario1 = () => {
-  productGrpcClient.connect('localhost:5102', {plaintext: true, reflect: true});
-  orderGrpcClient.connect('localhost:5101', {plaintext: true, reflect: true});
+  let host = 'localhost';
+  if(__ENV.DOCKER === 'true') {
+    host = 'host.docker.internal';
+  }
+
+  productGrpcClient.connect(`${host}:5102`, {plaintext: true, reflect: true});
+  orderGrpcClient.connect(`${host}:5101`, {plaintext: true, reflect: true});
 
   group("Product Service Calls", function () {
     randomizedRequest(
@@ -59,7 +64,7 @@ export const scenario1 = () => {
     const payload = JSON.stringify({sku: '1', newQuantity: 10});
     const params = {headers: {'Content-Type': 'application/json'}};
     randomizedRequest(
-        () => httpCall('post', 'http://localhost:8081/inventory/on-hand',
+        () => httpCall('post', `http://${host}:8081/inventory/on-hand`,
             payload, params),
         10
     );

@@ -1,0 +1,16 @@
+FROM openjdk:21-jdk-slim AS builder
+
+RUN echo "📦 Compile common dependencies"
+WORKDIR /dependencies
+
+# Protobuf common dependencies
+COPY ./protobuf/ ./protobuf
+RUN cd protobuf && ./mvnw clean install -DskipTests
+
+# Make .jar files available to the main build stage
+RUN mv /root/.m2/repository/io/giovannymassuia/disecomm/ /dependencies/maven
+
+FROM scratch AS dependencies
+
+# Making dependencies available to the main build stage
+COPY --from=builder /dependencies/maven /dependencies/maven

@@ -1,0 +1,140 @@
+name: disecomm
+
+x-common-app-depends-on: &common-app-depends-on
+  - postgres
+  - mongodb
+  - kafka
+  - grafana
+  - otel-collector
+  - prometheus
+  - tempo
+
+services:
+  # Database Services
+  postgres:
+    extends:
+      file: database/docker-compose.yml
+      service: postgres
+    profiles:
+      - database
+    labels:
+      - "group=databases"
+  mongodb:
+    extends:
+      file: database/docker-compose.yml
+      service: mongodb
+    profiles:
+      - database
+    labels:
+      - "group=databases"
+  kafka:
+    extends:
+      file: database/docker-compose.yml
+      service: kafka
+    environment:
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
+    profiles:
+      - database
+    labels:
+      - "group=databases"
+  kafka-ui:
+    extends:
+      file: database/docker-compose.yml
+      service: kafka-ui
+    profiles:
+      - database
+    labels:
+      - "group=databases"
+
+  # Monitoring Services
+  otel-collector:
+    extends:
+      file: monitoring/docker-compose.yml
+      service: otel-collector
+    profiles:
+      - monitoring
+    labels:
+      - "group=monitoring"
+  prometheus:
+    extends:
+      file: monitoring/docker-compose.yml
+      service: prometheus
+    profiles:
+      - monitoring
+    labels:
+      - "group=monitoring"
+  tempo:
+    extends:
+      file: monitoring/docker-compose.yml
+      service: tempo
+    profiles:
+      - monitoring
+    labels:
+      - "group=monitoring"
+  loki:
+    extends:
+      file: monitoring/docker-compose.yml
+      service: loki
+    profiles:
+      - monitoring
+    labels:
+      - "group=monitoring"
+  grafana:
+    extends:
+      file: monitoring/docker-compose.yml
+      service: grafana
+    profiles:
+      - monitoring
+    labels:
+      - "group=monitoring"
+
+  # Application Services
+  app-api-gateway:
+    image: disecomm-api-gateway:local
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - '8083:8083'
+    depends_on: *common-app-depends-on
+    profiles:
+      - application
+    labels:
+      - "group=application"
+  app-product-catalog:
+    image: disecomm-product-catalog:local
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - '5102:5102'
+    depends_on: *common-app-depends-on
+    profiles:
+      - application
+    labels:
+      - "group=application"
+  app-order-management:
+    image: disecomm-order-management:local
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - '8080:8080'
+      - '5101:5101'
+    depends_on: *common-app-depends-on
+    profiles:
+      - application
+    labels:
+      - "group=application"
+  app-inventory-management:
+    image: disecomm-inventory-management:local
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - '8081:8081'
+    depends_on: *common-app-depends-on
+    profiles:
+      - application
+    labels:
+      - "group=application"
+
+networks:
+  default:
+    name: shared-disecomm-network
