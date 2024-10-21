@@ -92,4 +92,4 @@ make clean-all
 
 ![grafana-dashboard.png](assets/grafana-dashboard.png)
 ![k6-dashboard.png](assets/k6-dashboard.png)
-![traces.png](traces.png)
+![traces.png](assets/traces.png)
