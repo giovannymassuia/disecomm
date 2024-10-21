@@ -4,7 +4,12 @@ RUN echo "📦 Compile common dependencies"
 WORKDIR /dependencies
 
 # Protobuf common dependencies
-COPY ./protobuf/ ./protobuf
+# for caching purposes, we copy the pom.xml, mvnw and .mvn files first
+COPY ./protobuf/pom.xml ./protobuf/mvnw ./protobuf/
+COPY ./protobuf/.mvn ./protobuf/.mvn
+RUN cd protobuf && ./mvnw dependency:go-offline -B
+# then we copy the source code and build the project
+COPY ./protobuf/src ./protobuf/src
 RUN cd protobuf && ./mvnw clean install -DskipTests
 
 # Make .jar files available to the main build stage

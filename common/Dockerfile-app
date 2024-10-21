@@ -10,9 +10,12 @@ WORKDIR /build
 # Copy the dependencies from the base dependencies image
 COPY --from=disecomm-build-dependencies:local /dependencies/maven /root/.m2/repository/io/giovannymassuia/disecomm
 
+# for caching purposes, we copy the pom.xml, mvnw and .mvn files first
+COPY ./${APP_NAME}/pom.xml ./${APP_NAME}/mvnw ./
+COPY ./${APP_NAME}/.mvn ./.mvn
+RUN  ./mvnw dependency:go-offline -B
 # Copy application source code to the container
-COPY ./${APP_NAME}/ ./
-
+COPY ./${APP_NAME}/src ./src
 # Build the application
 RUN ./mvnw clean package -DskipTests
 
