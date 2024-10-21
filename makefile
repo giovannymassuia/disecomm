@@ -58,15 +58,18 @@ run-all:
 	@echo "🚀 Starting docker containers..."
 	@cd local-dev && docker-compose --profile database --profile monitoring --profile application up -d
 
-clean:
+clean-all:
 	@echo "🧹 Shutting down all docker containers..."
 	@cd local-dev && docker-compose --profile database --profile monitoring --profile application down -v
 	@echo "🧹 Removing docker containers..."
 	@cd local-dev && docker-compose --profile database --profile monitoring --profile application rm -f
 
-run-load-test:
-	@echo "📈 Running load test..."
+run-load-test-docker:
+	@echo "📈 Running load test in docker..."
 	@cd local-dev/k6 && ./run_docker.sh
+run-load-test-local:
+	@echo "📈 Running load test from local..."
+	@cd local-dev/k6 && ./run_local.sh
 
 help:
 	@echo "Available targets:"
@@ -74,6 +77,7 @@ help:
 	@echo " build APP-NAME=<app-name> - 🔧 Build the app"
 	@echo " build-all                 - 🏗️ Build all apps"
 	@echo " run-all                   - 🚀 Start all resources and services"
-	@echo " run-load-test             - 📈 Run load test"
-	@echo " clean                     - Clean up build artifacts"
+	@echo " run-load-test-docker      - 📈 Run load test in docker 🐳"
+	@echo " run-load-test-local       - 📈 Run load test from local"
+	@echo " clean-all                 - 🧹 Shut down all resources and services"
 	@echo "---------------------------------------------------------------------"
