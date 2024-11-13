@@ -6,7 +6,7 @@
       <env name="OTEL_METRICS_EXPORTER" value="otlp" />
       <env name="OTEL_TRACES_EXPORTER" value="otlp" />
       <env name="OTEL_SERVICE_NAME" value="inventory-mgmt-app" />
-      <env name="JAVA_TOOL_OPTIONS" value="-javaagent:/Users/giovannymassuia/projects/github/disecomm/inventory-management/target/opentelemetry-javaagent-2.3.0.jar" />
+      <env name="JAVA_TOOL_OPTIONS" value="-javaagent:/Users/giovannymassuia/projects/github/disecomm/apps/inventory-management/target/opentelemetry-javaagent-2.3.0.jar" />
     </envs>
     <module name="inventory-management" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="io.giovannymassuia.disecomm.inventorymanagement.InventoryManagementApplication" />
