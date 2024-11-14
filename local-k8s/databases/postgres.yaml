@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres
+  namespace: disecomm-databases
+type: Opaque
+data:
+  POSTGRES_USERNAME: ZGF0YWJhc2U= # database
+  POSTGRES_PASSWORD: ZGF0YWJhc2U= # database
+  POSTGRES_DATABASE: ZGlzZWNvbW0= # disecomm
+  POSTGRES_REPLICATION_USER: cmVwbGljYXRpb24tYWRtaW4= # replication-admin
+  POSTGRES_REPLICATION_PASSWORD: cmVwbGljYXRpb24tcGFzc3dvcmQ= # replication-password
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-primary
+  namespace: disecomm-databases
+spec:
+  serviceName: postgres-primary # Pod DNS name
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete # Delete the PVC when the StatefulSet is deleted
+    whenScaled: Retain # Retain the PVC when the StatefulSet is scaled down
+  selector: # the label of the pods that this StatefulSet is managing, all the labels declared here must be present in the pods
+    matchLabels:
+      db: postgres
+      role: primary
+  template:
+    metadata:
+      labels: # the labels of the pods themselves
+        db: postgres
+        role: primary
+    spec:
+      containers:
+        - name: postgres
+          image: bitnami/postgresql:16.4.0
+          ports:
+            - containerPort: 5432 # The port the container listens on
+          envFrom:
+            - secretRef:
+                name: postgres
+          env:
+            - name: POSTGRESQL_REPLICATION_MODE
+              value: master
+          volumeMounts:
+            - mountPath: /bitnami/postgresql
+              name: postgres-data # The name of the PVC that should be mounted
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ] # allow only one pod to mount the PVC at a time
+        resources:
+          requests: # The amount of storage that the PVC should have
+            storage: 1Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-replica
+  namespace: disecomm-databases
+spec:
+  serviceName: postgres-replica # Pod DNS name
+  replicas: 2
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete # Delete the PVC when the StatefulSet is deleted
+    whenScaled: Retain # Retain the PVC when the StatefulSet is scaled down
+  selector: # the label of the pods that this StatefulSet is managing, all the labels declared here must be present in the pods
+    matchLabels:
+      db: postgres
+      role: replica
+  template:
+    metadata:
+      labels: # the labels of the pods themselves
+        db: postgres
+        role: replica
+    spec:
+      containers:
+        - name: postgres
+          image: bitnami/postgresql:16.4.0
+          ports:
+            - containerPort: 5432 # The port the container listens on
+          envFrom:
+            - secretRef:
+                name: postgres
+          env:
+            - name: POSTGRESQL_REPLICATION_MODE
+              value: slave
+            - name: POSTGRESQL_MASTER_HOST
+              # <pod-name>.<service-name>.<namespace>.svc.cluster.local
+              value: "postgres-primary-0.postgres-primary.disecomm-databases.svc.cluster.local"
+          volumeMounts:
+            - mountPath: /bitnami/postgresql
+              name: postgres-data # The name of the PVC that should be mounted
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ] # allow only one pod to mount the PVC at a time
+        resources:
+          requests: # The amount of storage that the PVC should have
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-primary
+  namespace: disecomm-databases
+spec:
+  selector:
+    db: postgres
+    role: primary
+  clusterIP: None # this makes the service headless
+  ports:
+    - protocol: TCP # The protocol that the service should use, the default is TCP
+      port: 5432 # The port that the service should listen on, this is the port that the clients will connect to
+      targetPort: 5432 # The port that the service should forward to, this is the port that the pods are listening on
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-replica
+  namespace: disecomm-databases
+spec:
+  selector:
+    db: postgres
+    role: replica
+  clusterIP: None # this makes the service headless
+  ports:
+    - protocol: TCP # The protocol that the service should use, the default is TCP
+      port: 5432 # The port that the service should listen on, this is the port that the clients will connect to
+      targetPort: 5432 # The port that the service should forward to, this is the port that the pods are listening on

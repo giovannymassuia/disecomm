@@ -4,12 +4,17 @@
     <data-source source="LOCAL" name="disecomm@localhost" uuid="47142974-ab9f-4323-80c5-cdd28599c7a1">
       <driver-ref>mongo</driver-ref>
       <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
       <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
       <jdbc-url>mongodb://localhost:27017/disecomm</jdbc-url>
       <jdbc-additional-properties>
-        <property name="com.intellij.clouds.kubernetes.db.host.port" />
+        <property name="com.intellij.clouds.kubernetes.db.host.port" value="27017" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
-        <property name="com.intellij.clouds.kubernetes.db.container.port" />
+        <property name="com.intellij.clouds.kubernetes.db.resource" value="mongo" />
+        <property name="com.intellij.clouds.kubernetes.db.context" value="k3d-disecomm-cluster" />
+        <property name="com.intellij.clouds.kubernetes.db.resource.type" value="Service" />
+        <property name="com.intellij.clouds.kubernetes.db.namespace" value="disecomm-databases" />
+        <property name="com.intellij.clouds.kubernetes.db.container.port" value="27017" />
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
@@ -47,6 +52,18 @@
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
         <property name="com.intellij.clouds.kubernetes.db.resource.type" value="Deployment" />
+        <property name="com.intellij.clouds.kubernetes.db.container.port" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="postgres@localhost [replica]" uuid="08940c1a-3032-4ad8-be80-598c6fcf717d">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5433/postgres</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.host.port" />
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
         <property name="com.intellij.clouds.kubernetes.db.container.port" />
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>

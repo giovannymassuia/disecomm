@@ -7,12 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
-        <module name="protobuf" />
-        <module name="product-catalog" />
         <module name="inventory-management" />
-        <module name="order-management" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="order-management" target="21" />
+      <module name="product-catalog" target="21" />
+      <module name="protobuf" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
