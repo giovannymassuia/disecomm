@@ -1,50 +1,16 @@
 apiVersion: v1
-kind: Secret
-metadata:
-  name: mongo-keyfile
-type: Opaque
-data:
-  mongo-keyfile: V3U5SnNSUU9YOGR5WTFzYUtkQmlkUFhtVFF1cjBnd01abjQ1RS85anhmR3B5K0J1NUdOK093bUsvaW5tZ3U0VwpydkxkK0JQbFh0clRreGhXN2pReWluVVVCcnJIZWpVZzNoeFlSK1ByUHJ6aTdLSWlpckhNZU5ZaWd2cFZCVlRqClp6NUlHMnRzZzZZZzFBam1jUTdZVUlJNFA2UkxYc3ZuYVNuNklWNW54Y3Z1M3NtbmF1eHJHWDNTSjM5dG5vSjIKOEU4NmtxeXc5SU1Ta2NhOFJuZEtmMFphakIyaThRNnZOK2paQkVvT0NBT2IyM0Vhditsd25QZXkxTXlOTFB2SQp0TkQrS0xOOVFjdUZ6ZUZpQmFxUDFlNVNvOFd2cmluWDNzQ2ZCbkpqY0FwRGxVZmk4OTZjdVAxWU8xWkExTjJwCi9hZGlKRFQvSnc3OUNhVzZDd3g2TDEwdTh3SUc4bDZ0cS80WFYyeTlVbURWbHlobzNtWWd2am1tQVRiYkQ2ZEcKeW81bDAybGQ2c3VNMThoOC9TUEN3eFYzUURTYVFKOWc1cExEQkdqQ2xPUDlIZjVWdjVmME81bEd6dzFvNVV6Tgo3UDZJaW43dHBLbTRUcDl6ajNhaHQ0ZWhpY3YybStlMVdOMDlBNHovUTVOMldwSjdZZTBtZmY2dWNWMGE4TlA0Ck9oRWx3UDI0dE5yMXJBZ2pocUNJMXFsMnA3Q3ZSanNWaVNsSDVwbDlvUzVtdzBzWG1oNk9udGZsVDhnNDBTSGYKdUhXbFkxWmI5cUFjMDhCQVJ5eVg1bjVCRzZJeGZRcEJjWlZxcFpNZW43c1k2MFRhUUdKSG81MmlTVWxrZnVRaQp5ZkkrdEZSQU4zaGdHUmVEVThZRzgvc21NNGV3dlpWeE1UYkh2eDVpeE9OajZtSEEwWHF2Mk45Nk5SY0FEWXB2ClRwZ0M1cGhDTlBVdi9rUTJOL1JKV3pYeHRIam9Ra2swWW9WWlRtYVg0VEJQaW02ZzlEMFc0WGwzSllqZmx3ZUcKSjcvTk1mN253WlUxV1ZRZ21aRFhVa0Rhb04xWjFmRjFYNy8yam9maXhtbnY1Q3E3Z3RJL1AzU21CLzhxSncvawpvVmNmNXpHK3JYbjJ0R08vWjA5NFZYVkNLSFBNQnN4UVhVdmFabDZzL0pOTjgwWnlQaXZkdnFpWk11bEhoWWZMCkVPSURNRU1wN1JwQnBHbXlCekVTejRKWWgwclVLSzFrL05XaXpOUFJXK29VVm5iK09vRGd4d09IcjJIbk5QVU4KSHVXK25ldE9idHJYYjVlTXp2VCtycFNJaVhlaFR5VWp5emxqZUJvTzh4SDljeFRGCg==
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mongo-init
   namespace: disecomm-databases
 data:
   create-user.js: |
-    // Check if Replica Set is already initialized
-    var rsStatus = rs.status();
-    console.log(rsStatus);
-    //if (rsStatus.ok === 0) {
-      // Initialize the Replica Set
-      rs.initiate({
-        _id: 'rs0',
-        members: [
-          { _id: 0, host: "mongodb-0.mongodb:27017" },
-          { _id: 1, host: "mongodb-1.mongodb:27017" },
-          { _id: 2, host: "mongodb-2.mongodb:27017" }
-        ]
-      });
-
-      // Wait for the Replica Set to be fully initialized
-      //while (rs.status().startupStatus === 3) {
-        //sleep(1000);
-      //}
-
-      // Create application user
-      db = db.getSiblingDB('disecomm');
-      db.createUser({
-        user: 'database',
-        pwd: 'database',
-        roles: [
-          {
-            role: 'readWrite',
-            db: 'disecomm'
-          }
-        ]
-      });
-    //}
+    db = db.getSiblingDB('disecomm');
+    db.createUser({
+      user: "database",
+      pwd: "database",
+      roles: [{ role: "readWrite", db: "disecomm" }]
+    });
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -53,7 +19,7 @@ metadata:
   namespace: disecomm-databases
 spec:
   serviceName: mongo
-  replicas: 3
+  replicas: 1
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Delete
     whenScaled: Retain
@@ -65,18 +31,9 @@ spec:
       labels:
         db: mongo
     spec:
-      securityContext:
-        runAsUser: 999          # Replace with appropriate UID
-        fsGroup: 999
       containers:
         - name: mongo
           image: mongo:8.0.3
-          args: # in docker, this would be the command
-            - "--replSet"
-            - "rs0"
-            - "--bind_ip_all"
-            - "--keyFile"
-            - "/data/mongo-keyfile"
           ports:
             - containerPort: 27017
           env:
@@ -84,25 +41,12 @@ spec:
               value: "database"
             - name: MONGO_INITDB_ROOT_PASSWORD
               value: "database"
-            - name: MONGO_REPLICA_SET_NAME
-              value: "rs0"
           volumeMounts:
-            - name: mongo-keyfile
-              mountPath: /data/mongo-keyfile
-              subPath: mongo-keyfile
-              readOnly: true
             - name: init-script
               mountPath: /docker-entrypoint-initdb.d
             - name: mongo-data
               mountPath: /data/db
       volumes:
-        - name: mongo-keyfile
-          secret:
-            secretName: mongo-keyfile
-            items:
-              - key: mongo-keyfile
-                path: mongo-keyfile
-            defaultMode: 256
         - name: init-script
           configMap:
             name: mongo-init
