@@ -9,7 +9,7 @@
       <jdbc-url>mongodb://localhost:27017/disecomm</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" value="27017" />
-        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="true" />
         <property name="com.intellij.clouds.kubernetes.db.resource" value="mongo" />
         <property name="com.intellij.clouds.kubernetes.db.context" value="k3d-disecomm-cluster" />
         <property name="com.intellij.clouds.kubernetes.db.resource.type" value="Service" />

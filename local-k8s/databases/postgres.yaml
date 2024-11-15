@@ -46,10 +46,14 @@ spec:
           volumeMounts:
             - mountPath: /bitnami/postgresql
               name: postgres-data # The name of the PVC that should be mounted
-  volumeClaimTemplates:
+  volumeClaimTemplates: # the PVC that the pods should use
     - metadata:
         name: postgres-data
       spec:
+        # when storageClassName is not specified, the default StorageClass is used
+        # to check what the default StorageClass is, run `kubectl get sc`
+        # it will have the `DEFAULT` column set to `true`
+        storageClassName: local-path # The storage class that the PVC should use
         accessModes: [ "ReadWriteOnce" ] # allow only one pod to mount the PVC at a time
         resources:
           requests: # The amount of storage that the PVC should have
