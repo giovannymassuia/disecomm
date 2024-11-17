@@ -35,6 +35,8 @@ kind: Service
 metadata:
   name: order-management-svc
   namespace: disecomm-apps
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: h2c
 spec:
   selector: # the pods that this service will route traffic to
     # selector must match the labels of the pods, it uses include all the labels
