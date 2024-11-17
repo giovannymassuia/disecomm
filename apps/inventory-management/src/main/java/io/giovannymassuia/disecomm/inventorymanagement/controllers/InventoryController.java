@@ -1,6 +1,7 @@
 package io.giovannymassuia.disecomm.inventorymanagement.controllers;
 
 import io.giovannymassuia.disecomm.inventorymanagement.services.InventoryService;
+import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class InventoryController {
         logger.info("Updating inventory for sku: {} to new quantity: {}", request.sku(),
             request.newQuantity());
         inventoryService.updateOnHandQuantity(request.sku(), request.newQuantity());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(URI.create("/inventory/on-hand/" + request.sku())).build();
     }
 
     public record UpdateOnHandRequest(String sku, int newQuantity) {
