@@ -5,25 +5,37 @@ import {check, group, sleep} from 'k6';
 const productGrpcClient = new grpc.Client();
 const orderGrpcClient = new grpc.Client();
 
+// Instructions for running the test
+// kubernetes resources: k6 run --env ENV=k8s main.js
+// docker-compose: k6 run --env ENV=docker main.js
+
 export const options = {
   scenarios: {
-    rampUpAndDown: {
-      executor: 'ramping-vus',
-      startVUs: 0,
-      stages: [
-        {duration: '3m', target: 25},
-        {duration: '5m', target: 10},
-        {duration: '4m', target: 15},
-        {duration: '4m', target: 0},
-      ],
-      startTime: '0m',
-      exec: 'scenario1',
-    },
-    constantLoad: {
+    // rampUpAndDown: {
+    //   executor: 'ramping-vus',
+    //   startVUs: 0,
+    //   stages: [
+    //     {duration: '3m', target: 25},
+    //     {duration: '5m', target: 10},
+    //     {duration: '4m', target: 15},
+    //     {duration: '4m', target: 0},
+    //   ],
+    //   startTime: '0m',
+    //   exec: 'scenario1',
+    // },
+    //
+    // constantLoad: {
+    //   executor: 'constant-vus',
+    //   vus: 10,
+    //   duration: '12m',
+    //   startTime: '4m',
+    //   exec: 'scenario1',
+    // },
+
+    smallLoad: {
       executor: 'constant-vus',
-      vus: 10,
-      duration: '12m',
-      startTime: '4m',
+      vus: 5,
+      duration: '30s',
       exec: 'scenario1',
     },
   }
@@ -35,13 +47,21 @@ export const options = {
 };
 
 export const scenario1 = () => {
-  let host = 'localhost';
-  if(__ENV.DOCKER === 'true') {
-    host = 'host.docker.internal';
+  let inventory_http_url = 'localhost:8081';
+  let product_grpc_url = 'localhost:5102';
+  let order_grpc_url = 'localhost:5101';
+  if(__ENV.ENV === 'docker') {
+    inventory_http_url = 'host.docker.internal:8081';
+    product_grpc_url = 'host.docker.internal:5102';
+    order_grpc_url = 'host.docker.internal:5101';
+  } else if (__ENV.ENV === 'k8s') {
+    inventory_http_url = 'inventory-management.127.0.0.1.nip.io:8888';
+    product_grpc_url = 'product-catalog.grpc.127.0.0.1.nip.io:8888';
+    order_grpc_url = 'order-management.grpc.127.0.0.1.nip.io:8888';
   }
 
-  productGrpcClient.connect(`${host}:5102`, {plaintext: true, reflect: true});
-  orderGrpcClient.connect(`${host}:5101`, {plaintext: true, reflect: true});
+  productGrpcClient.connect(`${product_grpc_url}`, {plaintext: true, reflect: true});
+  orderGrpcClient.connect(`${order_grpc_url}`, {plaintext: true, reflect: true});
 
   group("Product Service Calls", function () {
     randomizedRequest(
@@ -64,7 +84,7 @@ export const scenario1 = () => {
     const payload = JSON.stringify({sku: '1', newQuantity: 10});
     const params = {headers: {'Content-Type': 'application/json'}};
     randomizedRequest(
-        () => httpCall('post', `http://${host}:8081/inventory/on-hand`,
+        () => httpCall('post', `http://${inventory_http_url}/inventory/on-hand`,
             payload, params),
         10
     );
