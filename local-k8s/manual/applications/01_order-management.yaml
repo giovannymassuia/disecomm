@@ -1,45 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway
+  name: order-management
   namespace: disecomm-apps
 spec:
   selector: # pods that this deployment will manage
     matchLabels:
-      app: api-gateway
+      app: order-management
   template:
     metadata:
-      name: api-gateway # the name of the pod itself
+      name: order-management # the name of the pod itself
       labels: # labels of the pods, this must match the selector above
-        app: api-gateway
+        app: order-management
     spec:
       containers:
         - name: app # name of the container inside the pod
-          image: myregistry.localhost:5001/disecomm-api-gateway:local
+          image: myregistry.localhost:5001/disecomm-order-management:local
           imagePullPolicy: Always # always pull the image from the registry
           ports:
-            - containerPort: 5102 # the port the container listens on
-              name: http # the name of the port
+            - containerPort: 8080
+              name: http
+            - containerPort: 5102
+              name: grpc
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: k8s
             - name: HTTP_SERVER_PORT
               value: "8080"
+            - name: GRPC_SERVER_PORT
+              value: "5102"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-gateway-svc
+  name: order-management-svc
   namespace: disecomm-apps
 spec:
   selector: # the pods that this service will route traffic to
     # selector must match the labels of the pods, it uses include all the labels
-    app: api-gateway
+    app: order-management
   ports:
-    - protocol: TCP # the protocol that the service should use, the default is TCP
-      port: 8080 # the port the clients will connect to
-      targetPort: 8080  # the port the pods are listening on, must match the containerPort
-      name: http # the name of the port
+    - port: 8080
+      name: http
+    - port: 5102
+      name: grpc
   type: ClusterIP
 
 

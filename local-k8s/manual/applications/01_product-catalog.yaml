@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: app # name of the container inside the pod
-          image: k3d-myregistry.localhost:5001/disecomm-product-catalog:local
+          image: myregistry.localhost:5001/disecomm-product-catalog:local
           imagePullPolicy: Always # always pull the image from the registry
           ports:
             - containerPort: 5102 # the port the container listens on

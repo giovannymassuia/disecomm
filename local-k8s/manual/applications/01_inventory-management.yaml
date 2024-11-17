@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway
+  name: inventory-management
   namespace: disecomm-apps
 spec:
   selector: # pods that this deployment will manage
     matchLabels:
-      app: api-gateway
+      app: inventory-management
   template:
     metadata:
-      name: api-gateway # the name of the pod itself
+      name: inventory-management # the name of the pod itself
       labels: # labels of the pods, this must match the selector above
-        app: api-gateway
+        app: inventory-management
     spec:
       containers:
         - name: app # name of the container inside the pod
-          image: myregistry.localhost:5001/disecomm-api-gateway:local
+          image: myregistry.localhost:5001/disecomm-inventory-management:local
           imagePullPolicy: Always # always pull the image from the registry
           ports:
-            - containerPort: 5102 # the port the container listens on
+            - containerPort: 8080 # the port the container listens on
               name: http # the name of the port
           env:
             - name: SPRING_PROFILES_ACTIVE
@@ -29,12 +29,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-gateway-svc
+  name: inventory-management-svc
   namespace: disecomm-apps
 spec:
   selector: # the pods that this service will route traffic to
     # selector must match the labels of the pods, it uses include all the labels
-    app: api-gateway
+    app: inventory-management
   ports:
     - protocol: TCP # the protocol that the service should use, the default is TCP
       port: 8080 # the port the clients will connect to

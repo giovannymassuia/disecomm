@@ -12,8 +12,17 @@ registries:
     name: myregistry.localhost
     host: "0.0.0.0"
     hostPort: "5001"
-  use:
-    - k3d-myregistry.localhost:5001
+#  use:
+#    - k3d-myregistry.localhost:5001 # use only when the registry is already created, otherwise use the create option
+
+# authenticate dockerhub:
+#  config: |
+#    configs:
+#      registry-1.docker.io:
+#        auth:
+#          username: <username>
+#          password: <password or token>
+
 options:
   k3s: # options passed on to K3s itself
     extraArgs: # additional arguments passed to the `k3s server|agent` command; same as `--k3s-arg`

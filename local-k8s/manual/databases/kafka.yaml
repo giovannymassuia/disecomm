@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  namespace: disecomm-databases
+spec:
+  serviceName: kafka
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Retain
+  selector:
+    matchLabels:
+      db: kafka
+  template:
+    metadata:
+      labels:
+        db: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: bitnami/kafka:latest
+          ports:
+            - containerPort: 9092
+              name: kafka
+            - containerPort: 29092
+              name: kafka-plain
+          env:
+            # KRaft settings
+            - name: KAFKA_CFG_NODE_ID
+              value: "0"
+            - name: KAFKA_CFG_PROCESS_ROLES
+              value: "controller,broker"
+            - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+              value: "0@kafka:9093"
+            # Listeners
+            - name: KAFKA_CFG_LISTENERS
+              value: "PLAINTEXT://:29092,CONTROLLER://:9093,PLAINTEXT_HOST://:9092"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka.disecomm-databases:9092"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+            - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER"
+            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
+              value: "PLAINTEXT"
+            - name: KAFKA_JMX_PORT
+              value: "9997"
+            - name: KAFKA_JMX_OPTS
+              value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka0 -Dcom.sun.management.jmxremote.rmi.port=9997"
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: kafka-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: disecomm-databases
+spec:
+  selector:
+    db: kafka
+  clusterIP: None
+  ports:
+    - port: 9092
+      targetPort: 9092
+      name: kafka
+    - port: 29092
+      targetPort: 29092
+      name: kafka-plain
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui
+  namespace: disecomm-databases
+spec:
+  selector:
+    matchLabels:
+      app: kafka-ui
+  template:
+    metadata:
+      name: kafka-ui
+      labels:
+        app: kafka-ui
+    spec:
+      containers:
+        - name: app
+          image: provectuslabs/kafka-ui:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: KAFKA_CLUSTERS_0_NAME
+              value: local
+            - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+              value: kafka:29092
+            - name: KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED
+              value: 'true'
+            - name: KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED
+              value: 'true'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ui-svc
+  namespace: disecomm-databases
+spec:
+  selector:
+    app: kafka-ui
+  ports:
+    - port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kafka-ui-ingress
+  namespace: disecomm-databases
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: "kafka-ui.127.0.0.1.nip.io"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kafka-ui-svc
+                port:
+                  number: 8080

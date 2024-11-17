@@ -25,8 +25,8 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductGrpcService.class);
 
-//    @GrpcClient("product-availability-service")
-//    private ProductAvailabilityServiceGrpc.ProductAvailabilityServiceBlockingStub productAvailabilityService;
+    @GrpcClient("product-availability-service")
+    private ProductAvailabilityServiceGrpc.ProductAvailabilityServiceBlockingStub productAvailabilityService;
 
     @Autowired
     private ProductAnalyticsRepository productAnalyticsRepository;
@@ -72,14 +72,13 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
                                     .setProduct(Product.newBuilder()
                                                     .setId("1")
                                                     .setName("Product 1")
-//                                                    .setInStock(productAvailabilityService
-//                                                                    .checkProductAvailability(
-//                                                                        CheckProductAvailabilityRequest
-//                                                                            .newBuilder()
-//                                                                            .setProductId("1")
-//                                                                            .build()).getInStock()
-//                                                    ).build())
-                                                    .build())
+                                                    .setInStock(productAvailabilityService
+                                                                    .checkProductAvailability(
+                                                                        CheckProductAvailabilityRequest
+                                                                            .newBuilder()
+                                                                            .setProductId("1")
+                                                                            .build()).getInStock()
+                                                    ).build())
                                     .build());
 
         span.end();
