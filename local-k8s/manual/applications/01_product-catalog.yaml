@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-catalog
+  namespace: disecomm-apps
+spec:
+  selector: # pods that this deployment will manage
+    matchLabels:
+      app: product-catalog
+  template:
+    metadata:
+      name: product-catalog # the name of the pod itself
+      labels: # labels of the pods, this must match the selector above
+        app: product-catalog
+    spec:
+      containers:
+        - name: app # name of the container inside the pod
+          image: k3d-myregistry.localhost:5001/disecomm-product-catalog:local
+          imagePullPolicy: Always # always pull the image from the registry
+          ports:
+            - containerPort: 5102 # the port the container listens on
+              name: grpc # the name of the port
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+            - name: GRPC_SERVER_PORT
+              value: "5102"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-catalog-svc
+  namespace: disecomm-apps
+spec:
+  selector: # the pods that this service will route traffic to
+    # selector must match the labels of the pods, it uses include all the labels
+    app: product-catalog
+  ports:
+    - protocol: TCP # the protocol that the service should use, the default is TCP
+      port: 5102 # the port the clients will connect to
+      targetPort: 5102  # the port the pods are listening on, must match the containerPort
+      name: grpc # the name of the port
+  type: ClusterIP
+
+
