@@ -1,0 +1,31 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+servers: 1
+agents: 3
+ports:
+  # ingress traefik
+  - port: 8888:80
+    nodeFilters:
+      - loadbalancer
+registries:
+  create:
+    name: myregistry.localhost
+    host: "0.0.0.0"
+    hostPort: "5001"
+  use:
+    - k3d-myregistry.localhost:5001
+options:
+  k3s: # options passed on to K3s itself
+    extraArgs: # additional arguments passed to the `k3s server|agent` command; same as `--k3s-arg`
+      - arg: "--flannel-backend=none"
+        nodeFilters:
+          - server:*
+      - arg: "--disable-network-policy"
+        nodeFilters:
+          - server:*
+      - arg: "--cluster-cidr=192.168.0.0/16"
+        nodeFilters:
+          - server:*
+      - arg: "--disable=traefik"
+        nodeFilters:
+          - server:*

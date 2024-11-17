@@ -6,7 +6,8 @@ Use k3d to create a local k8s cluster. This will create a k3s cluster in docker.
 k3d cluster create disecomm-cluster --servers 1 --agents 3 -p "30000:30000@loadbalancer"
 
 # with local registry
-k3d cluster create disecomm-cluster --servers 1 --agents 3 -p "30000:30000@loadbalancer" --registry-use k3d-myregistry.localhost:5001
+# using 80 to match default traefik port
+k3d cluster create disecomm-cluster --servers 1 --agents 3 -p "80:80@loadbalancer" --registry-use k3d-myregistry.localhost:5001
 k3d registry create myregistry.localhost --port 5001
 ``` 
 
@@ -44,6 +45,8 @@ k3d cluster delete disecomm-cluster
       - `<replica-service-name>.<namespace>.svc.cluster.local:<port>`
       - to access a specific replica, inform the pod name in addition to the service name
           - `<pod-name>.<replica-service-name>.<namespace>.svc.cluster.local:<port>`
+    - to access from the same namespace
+        - `<service-name>:<port>`
 - persistent volume
     - will contain the database data
     - `k get storageclass`
@@ -53,7 +56,6 @@ k3d cluster delete disecomm-cluster
     - will contain the database url, username, and password
 - testing with port-forward
     - `kubectl port-forward svc/<service-name> <local-port>:<service-port>`
-
 
 ## Local Image Registry
 
@@ -88,3 +90,8 @@ When you create a Docker image locally and want to use it within your k3d cluste
 ➜  docker tag disecomm-product-catalog:local localhost:5001/disecomm-product-catalog:local
 ➜  docker push localhost:5001/disecomm-product-catalog:local
 ```
+
+
+## Ingress
+
+- api-gateway: `http://api-gateway.127.0.0.1.nip.io/graphiql?path=/graphql`
