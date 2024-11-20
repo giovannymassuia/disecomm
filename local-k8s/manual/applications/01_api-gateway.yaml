@@ -4,6 +4,7 @@ metadata:
   name: api-gateway
   namespace: disecomm-apps
 spec:
+  replicas: 1
   selector: # pods that this deployment will manage
     matchLabels:
       app: api-gateway
@@ -25,6 +26,14 @@ spec:
               value: k8s
             - name: HTTP_SERVER_PORT
               value: "8080"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m" # means 500 millicores, or 0.5 cores
+            requests:
+              memory: "512Mi"
+              cpu: "500m" # means 500 millicores, or 0.5 cores
+
 ---
 apiVersion: v1
 kind: Service
@@ -42,4 +51,37 @@ spec:
       name: http # the name of the port
   type: ClusterIP
 
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api-gateway-hpa
+  namespace: disecomm-apps
+spec:
+  minReplicas: 1
+  maxReplicas: 3
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api-gateway
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30 # how long to wait before scaling down
+      policies:
+        - type: Pods
+          value: 1 # the number of pods to keep
+          periodSeconds: 30 # how long to wait before removing pods
+    scaleUp:
+      stabilizationWindowSeconds: 30 # how long to wait before scaling up
+      policies:
+        - type: Pods
+          value: 1 # the number of pods to add each time
+          periodSeconds: 30 # how long to wait before adding more pods
 

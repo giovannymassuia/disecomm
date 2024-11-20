@@ -29,6 +29,7 @@ export const options = {
     //     {duration: '5m', target: 10},
     //     {duration: '4m', target: 15},
     //     {duration: '4m', target: 0},
+    //     // total duration: 16m
     //   ],
     //   startTime: '0m',
     //   exec: 'scenario1',
@@ -42,10 +43,24 @@ export const options = {
     //   exec: 'scenario1',
     // },
 
-    smallLoad: {
-      executor: 'constant-vus',
-      vus: 5,
-      duration: '30s',
+    // smallLoad: {
+    //   executor: 'constant-vus',
+    //   vus: 5,
+    //   duration: '30s',
+    //   exec: 'scenario1',
+    // },
+
+    rampUpAndDownChaos: {
+      executor: 'ramping-vus',
+      startVUs: 0,
+      stages: [
+        // {duration: '1m', target: 25},
+        {duration: '30s', target: 10},
+        {duration: '1m', target: 15},
+        {duration: '30s', target: 0},
+        // total duration: 4m
+      ],
+      startTime: '0m',
       exec: 'scenario1',
     },
   }
@@ -161,7 +176,7 @@ function httpCall(method, url, payload, params, expectedStatus = 200) {
 
   const checkResult = check(response, {
    [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus,
-    'acceptable response time': (r) => r.timings.duration < 300,
+    // 'acceptable response time': (r) => r.timings.duration < 300,
   });
 
   // Conditional logging for failures

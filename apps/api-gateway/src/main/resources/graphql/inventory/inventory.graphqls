@@ -1,0 +1,12 @@
+input ProductInventoryInput {
+  sku: ID!
+  quantity: Int!
+}
+
+type UpdateOnHandQuantityResponse {
+  success: Boolean!
+}
+
+extend type Mutation {
+  updateOnHandQuantity(input: ProductInventoryInput!): UpdateOnHandQuantityResponse!
+}

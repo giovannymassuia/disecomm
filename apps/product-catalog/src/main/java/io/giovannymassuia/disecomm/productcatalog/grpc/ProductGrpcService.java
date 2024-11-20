@@ -2,6 +2,7 @@ package io.giovannymassuia.disecomm.productcatalog.grpc;
 
 import io.giovannymassuia.disecomm.productcatalog.model.ProductAnalytics;
 import io.giovannymassuia.disecomm.productcatalog.model.ProductAnalyticsRepository;
+import io.giovannymassuia.disecomm.productcatalog.utils.ChaosUtils;
 import io.giovannymassuia.disecomm.protobuf.order.productavailability.CheckProductAvailabilityRequest;
 import io.giovannymassuia.disecomm.protobuf.order.productavailability.ProductAvailabilityServiceGrpc;
 import io.giovannymassuia.disecomm.protobuf.product.GetProductRequest;
@@ -43,16 +44,7 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
 
         LOGGER.info("Get product with id: {}", request.getId());
 
-        // add random delay between 100 and 2000 ms
-        try {
-            Thread.sleep((long) (Math.random() * 1900) + 100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // random fibonacci calculation between 1 and 40
-        int n = (int) (Math.random() * 50) + 1;
-        long result = fibonacci(n);
+        ChaosUtils.applyChaos(false);
 
         Span span = tracer.spanBuilder("getProductStart").startSpan();
 
@@ -102,13 +94,6 @@ public class ProductGrpcService extends ProductServiceGrpc.ProductServiceImplBas
                                                      .build())
                                     .build());
         responseObserver.onCompleted();
-    }
-
-    private long fibonacci(int n) {
-        if (n <= 1) {
-            return n;
-        }
-        return fibonacci(n - 1) + fibonacci(n - 2);
     }
 
 }

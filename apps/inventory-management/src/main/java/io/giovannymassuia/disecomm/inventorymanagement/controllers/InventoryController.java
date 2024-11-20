@@ -1,6 +1,7 @@
 package io.giovannymassuia.disecomm.inventorymanagement.controllers;
 
 import io.giovannymassuia.disecomm.inventorymanagement.services.InventoryService;
+import io.giovannymassuia.disecomm.inventorymanagement.utils.ChaosUtils;
 import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ public class InventoryController {
         logger.info("Updating inventory for sku: {} to new quantity: {}", request.sku(),
             request.newQuantity());
         inventoryService.updateOnHandQuantity(request.sku(), request.newQuantity());
+
+        ChaosUtils.applyChaos(false);
+
         return ResponseEntity.created(URI.create("/inventory/on-hand/" + request.sku())).build();
     }
 
