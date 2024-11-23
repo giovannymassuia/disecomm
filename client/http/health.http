@@ -1,0 +1,26 @@
+GET {{inventory_management_api_url}}/pod
+Accept: application/json
+
+###
+GET {{inventory_management_api_url}}/actuator/health/liveness
+Accept: application/json
+
+###
+POST {{inventory_management_api_url}}/health/liveness/alive
+Content-Type: application/json
+
+###
+POST {{inventory_management_api_url}}/health/liveness/dead
+Content-Type: application/json
+
+###
+GET {{inventory_management_api_url}}/actuator/health/readiness
+Accept: application/json
+
+###
+POST {{inventory_management_api_url}}/health/readiness/ready
+Content-Type: application/json
+
+###
+POST {{inventory_management_api_url}}/health/readiness/not-ready
+Content-Type: application/json

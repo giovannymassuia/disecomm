@@ -14,6 +14,7 @@ spec:
       labels: # labels of the pods, this must match the selector above
         app: inventory-management
     spec:
+      terminationGracePeriodSeconds: 5
       containers:
         - name: app # name of the container inside the pod
           image: myregistry.localhost:5001/disecomm-inventory-management:local
@@ -33,6 +34,32 @@ spec:
             requests:
               memory: "512Mi"
               cpu: "500m" # means 500 millicores, or 0.5 cores
+          startupProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              port: 8080
+              path: /actuator/health/liveness
+            failureThreshold: 30 # setting a high value to avoid false positives
+            periodSeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/liveness
+            initialDelaySeconds: 45
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/readiness
+            initialDelaySeconds: 45
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 3
 
 ---
 apiVersion: v1

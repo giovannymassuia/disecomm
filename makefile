@@ -61,6 +61,10 @@ run-all:
 	@echo "🚀 Starting docker containers..."
 	@cd local-dev && docker-compose --profile database --profile monitoring --profile application up -d
 
+run-db-only:
+	@echo "🚀 Starting only database containers..."
+	@cd local-dev && docker-compose --profile database up -d
+
 clean-all:
 	@echo "🧹 Shutting down all docker containers..."
 	@cd local-dev && docker-compose --profile database --profile monitoring --profile application down -v
@@ -82,6 +86,7 @@ help:
 	@printf "%-30s %-50s\n" "build-app" "🔧 Build the app (Requires APP_NAME=<app-name>)"
 	@printf "%-30s %-50s\n" "build-all" "🏗️ Build all apps"
 	@printf "%-30s %-50s\n" "run-all" "🚀 Start all resources and services"
+	@printf "%-30s %-50s\n" "run-db-only" "🚀 Start only database containers"
 	@printf "%-30s %-50s\n" "run-load-test-docker" "📈 Run load test in Docker 🐳"
 	@printf "%-30s %-50s\n" "run-load-test-local" "📈 Run load test from local"
 	@printf "%-30s %-50s\n" "clean-all" "🧹 Shut down all resources and services"
