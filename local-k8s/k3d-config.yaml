@@ -12,8 +12,8 @@ registries:
     name: myregistry.localhost
     host: "0.0.0.0"
     hostPort: "5001"
-#  use:
-#    - k3d-myregistry.localhost:5001 # use only when the registry is already created, otherwise use the create option
+  use:
+    - k3d-myregistry.localhost:5001 # use only when the registry is already created, otherwise use the create option
 
 # authenticate dockerhub:
 #  config: |
@@ -30,9 +30,6 @@ options:
         nodeFilters:
           - server:*
       - arg: "--disable-network-policy"
-        nodeFilters:
-          - server:*
-      - arg: "--cluster-cidr=192.168.0.0/16"
         nodeFilters:
           - server:*
       - arg: "--disable=traefik"

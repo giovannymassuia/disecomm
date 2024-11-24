@@ -13,6 +13,8 @@ spec:
       name: inventory-management # the name of the pod itself
       labels: # labels of the pods, this must match the selector above
         app: inventory-management
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "java-instrumentation"
     spec:
       terminationGracePeriodSeconds: 5
       containers:
@@ -30,7 +32,7 @@ spec:
           resources:
             limits:
               memory: "512Mi"
-              cpu: "500m" # means 500 millicores, or 0.5 cores
+              cpu: "2000m" # means 500 millicores, or 0.5 cores
             requests:
               memory: "512Mi"
               cpu: "500m" # means 500 millicores, or 0.5 cores

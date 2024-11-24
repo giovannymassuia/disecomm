@@ -31,6 +31,7 @@ spec:
       labels:
         db: mongo
     spec:
+      serviceAccountName: databases
       containers:
         - name: mongo
           image: mongo:8.0.3

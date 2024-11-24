@@ -13,6 +13,8 @@ spec:
       name: order-management # the name of the pod itself
       labels: # labels of the pods, this must match the selector above
         app: order-management
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "java-instrumentation"
     spec:
       containers:
         - name: app # name of the container inside the pod
@@ -33,7 +35,7 @@ spec:
           resources:
             limits:
               memory: "512Mi"
-              cpu: "500m" # means 500 millicores, or 0.5 cores
+              cpu: "2000m" # means 500 millicores, or 0.5 cores
             requests:
               memory: "512Mi"
               cpu: "500m" # means 100 millicores, or 0.1 cores

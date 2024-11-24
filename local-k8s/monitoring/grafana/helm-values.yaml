@@ -1,0 +1,37 @@
+# source: https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml#L98
+
+replicas: 1
+
+# Enable creating the grafana configmap
+createConfigmap: true
+
+# Extra configmaps to mount in grafana pods
+# Values are templated.
+extraConfigmapMounts: []
+  # - name: certs-configmap
+  #   mountPath: /etc/grafana/ssl/
+  #   subPath: certificates.crt # (optional)
+  #   configMap: certs-configmap
+  #   readOnly: true
+  #   optional: false
+
+extraEmptyDirMounts: []
+  # - name: provisioning-notifiers
+  #   mountPath: /etc/grafana/provisioning/notifiers
+
+# Apply extra labels to common labels.
+extraLabels: {}
+
+ingress:
+  enabled: true
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  labels: {}
+  path: /
+  pathType: Prefix
+  hosts:
+    - "grafana.127.0.0.1.nip.io"
+
+persistence:
+  type: pvc
+  enabled: true

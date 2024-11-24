@@ -92,6 +92,8 @@ spec:
       labels:
         app: kafka-ui
     spec:
+      imagePullSecrets:
+        - name: dockerhub-auth
       containers:
         - name: app
           image: provectuslabs/kafka-ui:latest

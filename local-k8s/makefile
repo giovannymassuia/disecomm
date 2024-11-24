@@ -19,7 +19,16 @@ create-cluster:
 
 create-k3d-cluster:
 	@echo "\n🏗️ Creating k3d cluster...\n"
-	@k3d cluster create $(CLUSTER_NAME) --config k3d-config.yaml
+	@k3d cluster create $(CLUSTER_NAME) --config k3d-config.yaml --servers-memory 1g --agents-memory 2g
+
+	@echo "\n🔍 Cluster details:"
+	@docker ps --filter "name=k3d-disecomm-cluster-" --format "{{.ID}} {{.Names}}" \
+       | grep -E "k3d-disecomm-cluster-(agent|server)-[0-9]+" \
+       | awk '{print $1}' \
+       | xargs docker inspect \
+       | jq -r '.[] | {Name: .Name, NanoCPUs: .HostConfig.NanoCpus, Memory: .HostConfig.Memory} | "\(.Name | sub("^/k3d-disecomm-cluster-"; ""))\t\((.NanoCPUs / 100000 / 10000) | tostring)cpu\t\(.Memory / 1048576) MB"' \
+       | column -t
+
 	@$(MAKE) install-calico
 	@$(MAKE) install-traefik
 	@echo "✅ Cluster created successfully"
@@ -42,7 +51,8 @@ install-traefik:
 	@echo "✅ Traefik installed successfully"
 
 create-kind-cluster:
-	@echo "\n😢 Not implemented yet"
+	@echo "\n🏗️ Creating k3d cluster...\n"
+	@kind create cluster --name $(CLUSTER_NAME) --config kind-config.yaml
 
 delete-cluster:
 	@echo "\n🧹 Deleting cluster..."
@@ -54,7 +64,7 @@ delete-cluster:
 	if [ "$$choice" = "1" ]; then \
 		k3d cluster delete $(CLUSTER_NAME); \
 	elif [ "$$choice" = "2" ]; then \
-		echo "😢 Not implemented yet"; \
+		kind delete cluster --name $(CLUSTER_NAME); \
 	else \
 		echo "❌ Invalid choice"; \
 	fi

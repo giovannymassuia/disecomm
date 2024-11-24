@@ -1,0 +1,65 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: simplest
+spec:
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+      attributes:
+        actions:
+          - key: loki.resource.labels
+            action: insert
+            value: service_name, environment
+      resource:
+        attributes:
+          - key: environment
+            from_attribute: environment
+            action: insert
+          # rename the service.name attribute to service_name
+          - key: service_name
+            from_attribute: service.name
+            action: insert
+
+    exporters:
+      debug:
+        verbosity: detailed
+      prometheus:
+        endpoint: 0.0.0.0:8889
+      otlphttp/logs:
+        endpoint: http://loki:3100/otlp
+        tls:
+          insecure: true
+      otlp:
+        endpoint: tempo:4317
+        tls:
+          insecure: true
+
+    service:
+      pipelines:
+        logs:
+          receivers: [otlp]
+          processors: [ resource, attributes, batch ]
+          exporters: [debug, otlphttp/logs]
+        metrics:
+          receivers: [otlp]
+          processors: [ resource, batch ]
+          exporters: [debug, prometheus]
+        traces:
+          receivers: [otlp]
+          processors: [ resource, batch ]
+          exporters: [debug, otlp]

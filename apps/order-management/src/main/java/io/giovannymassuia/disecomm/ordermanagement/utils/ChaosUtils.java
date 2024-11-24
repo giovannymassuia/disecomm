@@ -27,7 +27,7 @@ public class ChaosUtils {
      * Performs a random Fibonacci calculation between 1 and 50.
      */
     public static void stressCPUWithFibonacci() {
-        int n = 1 + RANDOM.nextInt(50); // Random Fibonacci input between 1 and 50
+        int n = 1 + RANDOM.nextInt(20); // Random Fibonacci input between 1 and 50
         LOGGER.info("Calculating Fibonacci for n = {}", n);
         long result = fibonacci(n);
         LOGGER.info("Fibonacci result for n = {} is {}", n, result);
