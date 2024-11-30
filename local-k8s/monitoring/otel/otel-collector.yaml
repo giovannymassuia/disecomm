@@ -2,6 +2,7 @@ apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: simplest
+  namespace: monitoring
 spec:
   config:
     receivers:
@@ -38,12 +39,16 @@ spec:
     exporters:
       debug:
         verbosity: detailed
-      prometheus:
-        endpoint: 0.0.0.0:8889
-      otlphttp/logs:
-        endpoint: http://loki:3100/otlp
+      # https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/otlphttpexporter
+      otlphttp:
+        logs_endpoint: http://loki:3100/otlp/v1/logs
+        metrics_endpoint: http://prometheus:9090/api/v1/otlp/v1/metrics
         tls:
           insecure: true
+#      otlphttp/logs:
+#        endpoint: http://loki:3100/otlp
+#        tls:
+#          insecure: true
       otlp:
         endpoint: tempo:4317
         tls:
@@ -54,11 +59,11 @@ spec:
         logs:
           receivers: [otlp]
           processors: [ resource, attributes, batch ]
-          exporters: [debug, otlphttp/logs]
+          exporters: [debug, otlphttp]
         metrics:
           receivers: [otlp]
           processors: [ resource, batch ]
-          exporters: [debug, prometheus]
+          exporters: [debug, otlphttp]
         traces:
           receivers: [otlp]
           processors: [ resource, batch ]
