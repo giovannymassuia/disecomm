@@ -40,17 +40,37 @@ spec:
       debug:
         verbosity: detailed
       # https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/otlphttpexporter
-      otlphttp:
-        logs_endpoint: http://loki:3100/otlp/v1/logs
-        metrics_endpoint: http://prometheus:9090/api/v1/otlp/v1/metrics
+      # https://grafana.com/docs/loki/latest/reference/loki-http-api/
+
+      #    OTLP/HTTP exporter option 1
+      # otlphttp:
+      #   logs_endpoint: http://loki:3100/otlp/v1/logs
+      #   metrics_endpoint: http://prometheus:9090/api/v1/otlp/v1/metrics
+      #   tls:
+      #     insecure: true
+
+      #    OTLP/HTTP exporter option 2
+      otlphttp/prometheus: # '/prometheus' is my custom name for this exporter
+        endpoint: http://prometheus:9090/api/v1/otlp
         tls:
           insecure: true
-#      otlphttp/logs:
-#        endpoint: http://loki:3100/otlp
-#        tls:
-#          insecure: true
-      otlp:
+      otlphttp/loki: # '/logs' is my custom name for this exporter
+        endpoint: http://loki:3100/otlp
+        tls:
+          insecure: true
+
+      otlp/my-tempo:
         endpoint: tempo:4317
+        tls:
+          insecure: true
+
+      otlp/oteltui:
+        endpoint: otel-tui:4317
+        tls:
+          insecure: true
+
+      otlp/jaeger:
+        endpoint: jaeger:4317
         tls:
           insecure: true
 
@@ -58,13 +78,13 @@ spec:
       pipelines:
         logs:
           receivers: [otlp]
-          processors: [ resource, attributes, batch ]
-          exporters: [debug, otlphttp]
+          processors: [resource, attributes, batch]
+          exporters: [debug, otlphttp/loki, otlp/oteltui]
         metrics:
           receivers: [otlp]
-          processors: [ resource, batch ]
-          exporters: [debug, otlphttp]
+          processors: [resource, batch]
+          exporters: [debug, otlphttp/prometheus, otlp/oteltui]
         traces:
           receivers: [otlp]
-          processors: [ resource, batch ]
-          exporters: [debug, otlp]
+          processors: [resource, batch]
+          exporters: [debug, otlp/my-tempo, otlp/oteltui, otlp/jaeger]

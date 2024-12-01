@@ -2,6 +2,7 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
   name: java-instrumentation
+  namespace: disecomm-apps
 spec:
   exporter:
     endpoint: http://simplest-collector.monitoring:4317

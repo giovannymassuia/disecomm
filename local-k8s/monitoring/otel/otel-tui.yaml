@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-tui
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: otel-tui
+  template:
+    metadata:
+      name: otel-tui
+      labels:
+        app: otel-tui
+    spec:
+      containers:
+        - name: app
+          image: ymtdzzz/otel-tui:v0.3.7
+          stdin: true
+          tty: true
+          ports:
+            - containerPort: 4317
+              name: grpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-tui
+  namespace: monitoring
+spec:
+  selector:
+    app: otel-tui
+  ports:
+    - port: 4317
+      name: grpc

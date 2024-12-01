@@ -56,10 +56,20 @@ public class ChaosUtils {
         }
 
         System.out.println("Applying chaos...");
+        throwRandomException();
         addRandomDelay();
         stressCPUWithFibonacci();
         stressMemory();
         System.out.println("Chaos applied!");
+    }
+
+    /**
+     * Helper method to throw a random exception.
+     */
+    private static void throwRandomException() {
+        if (RANDOM.nextBoolean()) {
+            throw new RuntimeException("Random exception thrown by chaos monkey!");
+        }
     }
 
     /**
